@@ -1,0 +1,145 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    xfce4 xfce4-terminal \
+    xterm \
+    xrdp xorgxrdp \
+    dbus dbus-x11 dbus-user-session \
+    sudo \
+    git curl wget ca-certificates openssh-client \
+    vim nano htop jq ripgrep tree tmux zsh fzf \
+    iputils-ping dnsutils net-tools \
+    sqlite3 postgresql-client redis-tools \
+    man-db less filezilla \
+    unzip zip \
+    build-essential \
+    python3 python3-venv python3-pip \
+    pipx \
+    gnupg \
+    xauth x11-xserver-utils \
+    xserver-xorg-core xserver-xorg-legacy \
+    tigervnc-standalone-server \
+    psmisc \
+  && rm -rf /var/lib/apt/lists/*
+
+# Reinstall xorgxrdp to ensure modules are built against current Xorg
+RUN apt-get update && apt-get install -y --reinstall xorgxrdp && rm -rf /var/lib/apt/lists/*
+
+# Configure XRDP to use Xvnc (TigerVNC) by default
+# We do this by renaming the [Xorg] section so it's not picked up as the default
+COPY xrdp.ini /etc/xrdp/xrdp.ini
+
+# Allow Xorg to run for XRDP sessions inside a container
+RUN mkdir -p /etc/X11 \
+  && printf "allowed_users=anybody\n" > /etc/X11/Xwrapper.config
+
+RUN adduser xrdp ssl-cert || true
+
+# Start XFCE with a proper DBus session + runtime dir
+RUN printf '%s\n' \
+  '#!/bin/sh' \
+  'export XDG_SESSION_TYPE=x11' \
+  'export XDG_CURRENT_DESKTOP=XFCE' \
+  'export XDG_CONFIG_DIRS=/etc/xdg:/etc/X11/xinit/xinitrc.d' \
+  'exec > /home/testdev/xrdp.log 2>&1' \
+  'date' \
+  'echo "Starting session..."' \
+  'unset DBUS_SESSION_BUS_ADDRESS' \
+  'unset XDG_RUNTIME_DIR' \
+  'export XDG_RUNTIME_DIR="/tmp/runtime-$USER"' \
+  'mkdir -p "$XDG_RUNTIME_DIR"' \
+  'chmod 700 "$XDG_RUNTIME_DIR"' \
+  '# Try direct launch or dbus-run-session' \
+  'if [ -r ~/.xsession ]; then' \
+  '  . ~/.xsession' \
+  'else' \
+  '  exec dbus-run-session -- startxfce4' \
+  'fi' \
+  > /etc/xrdp/startwm.sh \
+  && chmod +x /etc/xrdp/startwm.sh
+
+# Node.js LTS via apt (NodeSource repo)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends nodejs \
+  && rm -rf /var/lib/apt/lists/*
+
+# uv via pipx (apt-first overall, pip second)
+ENV PIPX_HOME=/opt/pipx
+ENV PIPX_BIN_DIR=/usr/local/bin
+RUN mkdir -p "$PIPX_HOME" "$PIPX_BIN_DIR" \
+  && pipx install uv \
+  && uv --version
+
+# Install Visual Studio Code
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg \
+    && install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg \
+    && echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list \
+    && rm -f packages.microsoft.gpg \
+    && apt-get update \
+    && apt-get install -y code \
+    && rm -rf /var/lib/apt/lists/*
+
+
+
+# Install Google Chrome
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get update \
+    && apt-get install -y ./google-chrome-stable_current_amd64.deb \
+    && rm google-chrome-stable_current_amd64.deb \
+    && rm -rf /var/lib/apt/lists/* \
+    # Wrapper for no-sandbox
+    && echo '#!/bin/bash\n/opt/google/chrome/google-chrome --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/google-chrome \
+    && chmod +x /usr/local/bin/google-chrome
+
+
+
+# Install Antigravity (Google's AI IDE)
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y antigravity \
+    && rm -rf /var/lib/apt/lists/* \
+    # Create wrapper for no-sandbox and gpu disabling
+    && echo '#!/bin/bash\n/usr/share/antigravity/bin/antigravity --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/antigravity \
+    && chmod +x /usr/local/bin/antigravity
+
+
+
+
+
+
+# Create a wrapper for code to run with --no-sandbox
+RUN echo '#!/bin/bash\n/usr/share/code/code --no-sandbox --unity-launch --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/code \
+    && chmod +x /usr/local/bin/code
+
+
+
+
+RUN useradd -m -s /bin/bash testdev \
+  && echo "xfce4-session" > /home/testdev/.xsession \
+  && chown testdev:testdev /home/testdev/.xsession
+
+# Install Cursor Agent CLI system-wide (to avoid volume masking)
+# Install as root, it goes to /root/.local, then we move it to /opt
+# Install Cursor Agent CLI system-wide (to avoid volume masking)
+# Install as root, it goes to /root/.local, then we move it to /opt
+RUN curl -fsSL https://cursor.com/install | bash \
+    && mv /root/.local/share/cursor-agent /opt/cursor-agent \
+    && chmod -R a+rx /opt/cursor-agent \
+    && ln -s $(find /opt/cursor-agent -type f -name cursor-agent | head -n 1) /usr/local/bin/agent \
+    && ln -s $(find /opt/cursor-agent -type f -name cursor-agent | head -n 1) /usr/local/bin/cursor-agent
+
+
+
+
+
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 3389
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

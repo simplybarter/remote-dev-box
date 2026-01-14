@@ -1,0 +1,17 @@
+services:
+  testdev:
+    build: .
+    container_name: dev-testdev
+    restart: unless-stopped
+    ports:
+      - "3390:3389"
+    environment:
+      # Change this before you expose anything beyond your LAN.
+      # Example usage shown below.
+      - TESTDEV_PASSWORD=${TESTDEV_PASSWORD:-testdev}
+    volumes:
+      - testdev_home:/home/testdev
+    shm_size: "1gb"
+
+volumes:
+  testdev_home:
