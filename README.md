@@ -73,10 +73,6 @@ This project supports multi-user deployment where each user gets their own isola
     *   Rebuilds the Docker image.
     *   Recreates every user container (preserving data) to apply new tools/fixes.
 
-3.  **`./admin/maintenance.sh`**:
-    *   Cleans up disk space.
-    *   Removes stopped containers, dangling images, build cache, and *unused* volumes. (Active user data is safe).
-
 ### Example Workflow
 ```bash
 # 1. Create a user named 'alice'
