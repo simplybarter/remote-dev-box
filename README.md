@@ -64,4 +64,4 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
     *   Ensure you are running them via their wrappers (e.g., just type `google-chrome` or `code`). Direct binary execution might fail without the `--no-sandbox` flag.
 
 *   **"Connection Refused" during build**:
-    *   Some download URLs (like Cursor AppImage) might block automated requests. The Dockerfile uses alternative installation methods (CLI) or user-agent spoofing where possible.
+    *   Some download URLs might block automated requests. The Dockerfile uses alternative installation methods (CLI) or user-agent spoofing where possible.
