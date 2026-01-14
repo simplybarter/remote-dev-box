@@ -4,21 +4,29 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 
 ## 🚀 Quick Start
 
-1.  **Build and Start**:
+1.  **Build the Image**:
+    The admin scripts will automatically build the image on first use, or you can build it manually:
     ```bash
-    docker compose up -d --build
+    docker build -t remote-dev-image .
     ```
 
-2.  **Connect**:
+2.  **Create a User**:
+    Use the admin script to create your first user. It will assign a dedicated port and persistent home volume.
+    ```bash
+    ./admin/manage_users.sh add myuser
+    # Output: User 'myuser' created! Connect via localhost:3400
+    ```
+
+3.  **Connect**:
     *   Open your RDP client (Remmina, Microsoft Remote Desktop, etc.).
-    *   Connect to: `localhost:3390`
-    *   **User**: `testdev`
-    *   **Password**: `testdev` (configurable in `.env` or `docker-compose.yml`)
+    *   Connect to: `localhost:3400` (or whatever specific port was assigned)
+    *   **User**: `myuser`
+    *   **Password**: `myuser` (default, or whatever you passed to the script)
 
-3.  **Stop**:
-    ```bash
-    docker compose down
-    ```
+4.  **Manage**:
+    *   **List Users**: `./admin/manage_users.sh list`
+    *   **Update All**: `./admin/deploy_update.sh`
+
 
 ## 🛠️ Included Tools
 
@@ -47,6 +55,36 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
     *   `tree` (Directory viewer)
 *   **Databases (Clients)**: `sqlite3`, `psql` (PostgreSQL), `redis-cli`.
 *   **Network**: `ping`, `dig`, `curl`, `wget`.
+
+## 👥 User Management & Admin Scripts
+
+This project supports multi-user deployment where each user gets their own isolated container with persistent data.
+
+### Scripts in `admin/`
+
+1.  **`./admin/manage_users.sh`**:
+    *   `add <username> [password]`: Creates a new container for a user over a unique port.
+    *   `remove <username>`: Destroys the container (keeps data volume safe).
+    *   `list`: Shows all active users and their ports.
+    *   `backup <username>`: Creates a `.tar.gz` backup of the user's home directory.
+
+2.  **`./admin/deploy_update.sh`**:
+    *   Updates the entire fleet.
+    *   Rebuilds the Docker image.
+    *   Recreates every user container (preserving data) to apply new tools/fixes.
+
+### Example Workflow
+```bash
+# 1. Create a user named 'alice'
+./admin/manage_users.sh add alice secret123
+# (Alice connects via localhost:3401)
+
+# 2. Add a new tool to Dockerfile (e.g., 'golang')
+# ... edit Dockerfile ...
+
+# 3. Rollout update to Alice and everyone else
+./admin/deploy_update.sh
+```
 
 ## ⚙️ Configuration Details
 

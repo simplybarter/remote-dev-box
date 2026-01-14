@@ -43,7 +43,7 @@ RUN printf '%s\n' \
   'export XDG_SESSION_TYPE=x11' \
   'export XDG_CURRENT_DESKTOP=XFCE' \
   'export XDG_CONFIG_DIRS=/etc/xdg:/etc/X11/xinit/xinitrc.d' \
-  'exec > /home/testdev/xrdp.log 2>&1' \
+  'exec > $HOME/xrdp.log 2>&1' \
   'date' \
   'echo "Starting session..."' \
   'unset DBUS_SESSION_BUS_ADDRESS' \
@@ -119,9 +119,7 @@ RUN echo '#!/bin/bash\n/usr/share/code/code --no-sandbox --unity-launch --disabl
 
 
 
-RUN useradd -m -s /bin/bash testdev \
-  && echo "xfce4-session" > /home/testdev/.xsession \
-  && chown testdev:testdev /home/testdev/.xsession
+
 
 # Install Cursor Agent CLI system-wide (to avoid volume masking)
 # Install as root, it goes to /root/.local, then we move it to /opt

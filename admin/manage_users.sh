@@ -1,0 +1,141 @@
+#!/bin/bash
+set -euo pipefail
+
+# Configuration
+CONFIG_FILE="$(dirname "$0")/users.conf"
+BASE_IMAGE_NAME="remote-dev-image"
+START_PORT=3400
+
+# Ensure config file exists
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    touch "$CONFIG_FILE"
+fi
+
+usage() {
+    echo "Usage: $0 {add|remove|list|backup} [args...]"
+    echo "  add <username> [password]  - Create a new user container"
+    echo "  remove <username>          - Stop and remove a user container"
+    echo "  list                       - List active users and ports"
+    echo "  backup <username>          - Backup user home directory"
+    exit 1
+}
+
+get_next_port() {
+    local last_port
+    last_port=$(cut -d: -f2 "$CONFIG_FILE" | sort -rn | head -n1)
+    if [[ -z "$last_port" ]]; then
+        echo "$START_PORT"
+    else
+        echo $((last_port + 1))
+    fi
+}
+
+add_user() {
+    local user="$1"
+    local password="${2:-$1}" # Default password is username
+    
+    if grep -q "^${user}:" "$CONFIG_FILE"; then
+        echo "Error: User '$user' already exists."
+        exit 1
+    fi
+
+    echo "Building base image if needed..."
+    docker build -t "$BASE_IMAGE_NAME" -f ../dockerfile ../
+
+    local port
+    port=$(get_next_port)
+    
+    echo "Creating user '$user' on port $port..."
+    
+    # Create the volume first
+    docker volume create "remote_dev_home_${user}" >/dev/null
+
+    # Run the container
+    docker run -d \
+        --name "dev-${user}" \
+        --restart unless-stopped \
+        -p "${port}:3389" \
+        -v "remote_dev_home_${user}:/home/${user}" \
+        -e "USER_NAME=${user}" \
+        -e "TESTDEV_PASSWORD=${password}" \
+        --shm-size="2gb" \
+        "$BASE_IMAGE_NAME"
+
+    # Save to config
+    echo "${user}:${port}" >> "$CONFIG_FILE"
+    echo "User '$user' created! Connect via localhost:${port}"
+}
+
+remove_user() {
+    local user="$1"
+    
+    if ! grep -q "^${user}:" "$CONFIG_FILE"; then
+        echo "Error: User '$user' not found."
+        exit 1
+    fi
+
+    echo "Stopping container dev-${user}..."
+    docker stop "dev-${user}" || true
+    docker rm "dev-${user}" || true
+
+    # Remove from config
+    grep -v "^${user}:" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp" && mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
+    
+    echo "User '$user' removed."
+    echo "Note: Data volume 'remote_dev_home_${user}' was NOT deleted. Remove manually if needed: docker volume rm remote_dev_home_${user}"
+}
+
+list_users() {
+    echo "Active Users:"
+    echo "USER       PORT    STATUS"
+    echo "-------------------------"
+    if [[ ! -s "$CONFIG_FILE" ]]; then
+        echo "(No users found)"
+        return
+    fi
+    
+    while IFS=: read -r user port; do
+        local status
+        status=$(docker inspect -f '{{.State.Status}}' "dev-${user}" 2>/dev/null || echo "stopped/missing")
+        printf "%-10s %-7s %s\n" "$user" "$port" "$status"
+    done < "$CONFIG_FILE"
+}
+
+backup_user() {
+    local user="$1"
+    local volume="remote_dev_home_${user}"
+    local timestamp
+    timestamp=$(date +%Y%m%d_%H%M%S)
+    local backup_file="backup_${user}_${timestamp}.tar.gz"
+
+    echo "Backing up volume '$volume' to $backup_file..."
+    
+    docker run --rm \
+        -v "$volume":/source \
+        -v "$(pwd)":/backup \
+        ubuntu:24.04 \
+        tar czf "/backup/$backup_file" -C /source .
+        
+    echo "Backup complete: $backup_file"
+}
+
+case "${1:-}" in
+    add)
+        if [[ -z "${2:-}" ]]; then usage; fi
+        add_user "$2" "${3:-}"
+        ;;
+    remove)
+        if [[ -z "${2:-}" ]]; then usage; fi
+        remove_user "$2"
+        ;;
+    list)
+        list_users
+        ;;
+    backup)
+        if [[ -z "${2:-}" ]]; then usage; fi
+        backup_user "$2"
+        ;;
+    *)
+        usage
+        ;;
+esac
