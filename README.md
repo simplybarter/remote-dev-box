@@ -5,10 +5,12 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 ## 🚀 Quick Start
 
 1.  **Build the Image**:
-    The admin scripts will automatically build the image on first use, or you can build it manually:
+    Run the update script. It will automatically create a local `dockerfile` from `dockerfile.example` if one doesn't exist, and then build it.
     ```bash
-    docker build -t remote-dev-image .
+    ./admin/deploy_update.sh
     ```
+    > **Note**: Your local `dockerfile` is `.gitignore`'d. You can customize it without fear of it being overwritten by future git pulls.
+
 
 2.  **Create a User**:
     Use the admin script to create your first user. It will assign a dedicated port and persistent home volume.

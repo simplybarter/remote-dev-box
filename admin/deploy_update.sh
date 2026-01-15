@@ -21,6 +21,19 @@ done
 
 USED_DOCKERFILE="${CUSTOM_DOCKERFILE:-$DEFAULT_DOCKERFILE}"
 
+# Auto-initialize Dockerfile if missing (First Run Scenario)
+if [[ "$USED_DOCKERFILE" == "$DEFAULT_DOCKERFILE" ]] && [[ ! -f "$DEFAULT_DOCKERFILE" ]]; then
+    EXAMPLE_DOCKERFILE="$PROJECT_ROOT/dockerfile.example"
+    if [[ -f "$EXAMPLE_DOCKERFILE" ]]; then
+        echo "Creating initial Dockerfile from dockerfile.example..."
+        cp "$EXAMPLE_DOCKERFILE" "$DEFAULT_DOCKERFILE"
+    else
+        echo "ERROR: Neither dockerfile nor dockerfile.example found!"
+        exit 1
+    fi
+fi
+
+
 # Setup Logging
 LOG_DIR="$PROJECT_ROOT/admin/logs"
 mkdir -p "$LOG_DIR"
