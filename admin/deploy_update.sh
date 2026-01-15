@@ -55,7 +55,7 @@ if [ -d "$PROJECT_ROOT/backups" ]; then chmod 700 "$PROJECT_ROOT/backups"; fi
 
 
 # Setup Logging
-LOG_DIR="$PROJECT_ROOT/admin/logs"
+LOG_DIR="$PROJECT_ROOT/logs"
 mkdir -p "$LOG_DIR"
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 LOG_FILE="$LOG_DIR/build-${TIMESTAMP}.log"

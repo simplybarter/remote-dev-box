@@ -1,4 +1,4 @@
-admin/logs/
+logs/
 admin/users.conf
 dockerfile
 backups/
