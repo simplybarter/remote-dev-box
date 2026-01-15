@@ -26,6 +26,10 @@ Thank you for your interest in contributing! This project relies on a combinatio
     ./admin/deploy_update.sh
     ```
 3.  Verify the new tool/configuration appears in your user container.
+4.  **Check Logs**: If the build fails or hangs, review the detailed build logs in the `logs/` directory:
+    ```bash
+    cat logs/build-<timestamp>.log
+    ```
 
 ### Testing Admin Scripts
 *   Create a test user to verify script logic:
