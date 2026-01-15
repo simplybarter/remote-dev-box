@@ -68,6 +68,7 @@ add_user() {
 
     # Save to config (user:port:password)
     echo "${user}:${port}:${password}" >> "$CONFIG_FILE"
+    chmod 600 "$CONFIG_FILE"
     echo "User '$user' created! Connect via localhost:${port}"
 }
 
@@ -85,6 +86,7 @@ remove_user() {
 
     # Remove from config
     grep -v "^${user}:" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp" && mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
+    chmod 600 "$CONFIG_FILE"
     
     echo "User '$user' removed."
     echo "Note: Data volume 'remote_dev_home_${user}' was NOT deleted. Remove manually if needed: docker volume rm remote_dev_home_${user}"
@@ -114,6 +116,7 @@ update_password() {
     grep -v "^${user}:" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp"
     echo "${user}:${port}:${new_password}" >> "${CONFIG_FILE}.tmp"
     mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
+    chmod 600 "$CONFIG_FILE"
     
     echo "Restarting container with new password..."
     docker stop "dev-${user}" >/dev/null
@@ -155,6 +158,7 @@ backup_user() {
     # Setup Backup Directory
     local backup_dir="$PROJECT_ROOT/backups"
     mkdir -p "$backup_dir"
+    chmod 700 "$backup_dir"
     
     local timestamp
     timestamp=$(date +%Y%m%d_%H%M%S)
@@ -168,6 +172,7 @@ backup_user() {
         ubuntu:24.04 \
         tar czf "/backup/$backup_file" -C /source .
         
+    chmod 600 "$backup_dir/$backup_file"
     echo "Backup complete: $backup_dir/$backup_file"
 }
 
