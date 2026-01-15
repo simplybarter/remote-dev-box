@@ -46,6 +46,12 @@ if [[ "$USED_DOCKERFILE" == "$DEFAULT_DOCKERFILE" ]] && [[ ! -f "$DEFAULT_DOCKER
     fi
 fi
 
+# Setup Logging
+LOG_DIR="$PROJECT_ROOT/logs"
+mkdir -p "$LOG_DIR"
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_FILE="$LOG_DIR/build-${TIMESTAMP}.log"
+
 # Permissions Enforcement (For fresh clones)
 echo "Enforcing file permissions..."
 chmod 755 "$PROJECT_ROOT/entrypoint.sh" "$PROJECT_ROOT/admin/"*.sh
@@ -53,15 +59,14 @@ if [ -f "$CONFIG_FILE" ]; then chmod 600 "$CONFIG_FILE"; fi
 if [ -f "$PROJECT_ROOT/docker-compose.yml" ]; then chmod 600 "$PROJECT_ROOT/docker-compose.yml"; fi
 if [ -d "$PROJECT_ROOT/backups" ]; then chmod 700 "$PROJECT_ROOT/backups"; fi
 if [ -d "$PROJECT_ROOT/logs" ]; then chmod 700 "$PROJECT_ROOT/logs"; fi
+
 # Secure text files in root
-chmod 600 "$PROJECT_ROOT/README.md" "$PROJECT_ROOT/.gitignore" "$PROJECT_ROOT/dockerfile.example" "$PROJECT_ROOT/xrdp.ini"
+for file in "README.md" ".gitignore" "dockerfile.example" "xrdp.ini" "dockerfile"; do
+    if [ -f "$PROJECT_ROOT/$file" ]; then
+        chmod 600 "$PROJECT_ROOT/$file"
+    fi
+done
 
-
-# Setup Logging
-LOG_DIR="$PROJECT_ROOT/logs"
-mkdir -p "$LOG_DIR"
-TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-LOG_FILE="$LOG_DIR/build-${TIMESTAMP}.log"
 
 echo "=== Starting Global Update Deployment ==="
 echo "Project Root: $PROJECT_ROOT"
