@@ -46,6 +46,13 @@ if [[ "$USED_DOCKERFILE" == "$DEFAULT_DOCKERFILE" ]] && [[ ! -f "$DEFAULT_DOCKER
     fi
 fi
 
+# Permissions Enforcement (For fresh clones)
+echo "Enforcing file permissions..."
+chmod 755 "$PROJECT_ROOT/entrypoint.sh" "$PROJECT_ROOT/admin/"*.sh
+if [ -f "$CONFIG_FILE" ]; then chmod 600 "$CONFIG_FILE"; fi
+if [ -f "$PROJECT_ROOT/docker-compose.yml" ]; then chmod 600 "$PROJECT_ROOT/docker-compose.yml"; fi
+if [ -d "$PROJECT_ROOT/backups" ]; then chmod 700 "$PROJECT_ROOT/backups"; fi
+
 
 # Setup Logging
 LOG_DIR="$PROJECT_ROOT/admin/logs"
