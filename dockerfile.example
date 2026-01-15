@@ -11,11 +11,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     git curl wget ca-certificates openssh-client \
     vim nano htop jq ripgrep tree tmux zsh fzf \
-    iputils-ping dnsutils net-tools \
+    iputils-ping dnsutils net-tools iproute2 \
     sqlite3 postgresql-client redis-tools \
     man-db less filezilla \
-    unzip zip \
+    unzip zip 7zip \
     build-essential \
+    bash-completion \
+    lsof \
+    locales \
     python3 python3-venv python3-pip \
     pipx \
     gnupg \
@@ -23,7 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xserver-xorg-core xserver-xorg-legacy \
     tigervnc-standalone-server \
     psmisc \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && locale-gen en_US.UTF-8
 
 # Install GitHub CLI (gh)
 RUN mkdir -p -m 755 /etc/apt/keyrings \

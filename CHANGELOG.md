@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - **Base System**: Ubuntu 24.04 LTS (Noble Numbat) with XFCE4 Desktop and XRDP (TigerVNC backend).
+    - `locales` (Generated `en_US.UTF-8`).
 - **Core Languages**:
     - Python 3.12 (System) & Python 3.14 (DeadSnakes PPA).
     - Node.js 22.x (LTS) with `npm`, `pnpm` (Global).
@@ -27,8 +28,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `git` (Version Control).
     - `gh` (GitHub CLI).
     - `openssh-client`.
+    - `bash-completion`.
     - `tmux` (Terminal Multiplexer).
-    - `ripgrep`, `jq`, `fzf`, `htop`, `tree`.
+    - `ripgrep`, `jq`, `fzf`, `htop`, `tree`, `lsof`.
+    - `7zip` (Archive manager).
+    - `iproute2` (Modern networking tools).
 - **Applications**:
     - Google Chrome (Browser).
     - FileZilla (FTP/SFTP Client).
