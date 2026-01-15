@@ -52,6 +52,7 @@ chmod 755 "$PROJECT_ROOT/entrypoint.sh" "$PROJECT_ROOT/admin/"*.sh
 if [ -f "$CONFIG_FILE" ]; then chmod 600 "$CONFIG_FILE"; fi
 if [ -f "$PROJECT_ROOT/docker-compose.yml" ]; then chmod 600 "$PROJECT_ROOT/docker-compose.yml"; fi
 if [ -d "$PROJECT_ROOT/backups" ]; then chmod 700 "$PROJECT_ROOT/backups"; fi
+if [ -d "$PROJECT_ROOT/logs" ]; then chmod 755 "$PROJECT_ROOT/logs"; fi
 
 
 # Setup Logging
