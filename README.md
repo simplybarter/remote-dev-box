@@ -66,6 +66,7 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 This project supports multi-user deployment where each user gets their own isolated container with persistent data.
 
 ### Scripts in `admin/`
+All scripts support the `-h` or `--help` flag to display usage instructions.
 
 1.  **`./admin/manage_users.sh`**:
     *   `add <username> [password]`: Creates a new container for a user over a unique port.
