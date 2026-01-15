@@ -21,13 +21,23 @@ done
 
 USED_DOCKERFILE="${CUSTOM_DOCKERFILE:-$DEFAULT_DOCKERFILE}"
 
+# Setup Logging
+LOG_DIR="$PROJECT_ROOT/admin/logs"
+mkdir -p "$LOG_DIR"
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_FILE="$LOG_DIR/build-${TIMESTAMP}.log"
+
 echo "=== Starting Global Update Deployment ==="
 echo "Project Root: $PROJECT_ROOT"
 echo "Using Dockerfile: $USED_DOCKERFILE"
+echo "Logging to: $LOG_FILE"
+
+# Redirect all future output to both stdout/stderr AND the log file
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 # 1. Rebuild the master image
 echo "[1/3] Rebuilding Base Image ($BASE_IMAGE_NAME)..."
-docker build -t "$BASE_IMAGE_NAME" -f "$USED_DOCKERFILE" "$PROJECT_ROOT"
+docker build --progress=plain -t "$BASE_IMAGE_NAME" -f "$USED_DOCKERFILE" "$PROJECT_ROOT"
 
 # 2. Iterate through all users
 if [[ ! -f "$CONFIG_FILE" ]] || [[ ! -s "$CONFIG_FILE" ]]; then

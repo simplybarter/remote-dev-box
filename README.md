@@ -40,7 +40,7 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 *   **Terminal Editors**: `vim`, `nano`.
 
 ### Development Stack
-*   **Node.js**: Version 22.x (LTS)
+*   **Node.js**: Version 22.x (LTS) with `npm`, `pnpm`
 *   **Python**: 3.12 (System Default) & 3.14 (Latest Stable)
 *   **Shell**: `zsh` (with `oh-my-zsh` ready), `bash`.
 *   **Git**: Version control.
