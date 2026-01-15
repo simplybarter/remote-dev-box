@@ -72,6 +72,7 @@ This project supports multi-user deployment where each user gets their own isola
     *   `remove <username>`: Destroys the container (keeps data volume safe).
     *   `list`: Shows all active users and their ports.
     *   `backup <username>`: Creates a `.tar.gz` backup of the user's home directory.
+    *   `update_password <username> <new_password>`: Updates the user's password and restarts their container.
 
 4.  **`./admin/monitor.sh`**:
     *   Shows a dashboard of current CPU/RAM usage per user.

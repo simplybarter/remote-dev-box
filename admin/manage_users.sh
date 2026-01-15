@@ -13,12 +13,14 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
     touch "$CONFIG_FILE"
 fi
 
+
 usage() {
-    echo "Usage: $0 {add|remove|list|backup} [args...]"
-    echo "  add <username> [password]  - Create a new user container"
-    echo "  remove <username>          - Stop and remove a user container"
-    echo "  list                       - List active users and ports"
-    echo "  backup <username>          - Backup user home directory"
+    echo "Usage: $0 {add|remove|list|backup|update_password} [args...]"
+    echo "  add <username> [password]      - Create a new user container"
+    echo "  remove <username>              - Stop and remove a user container"
+    echo "  list                           - List active users and ports"
+    echo "  backup <username>              - Backup user home directory"
+    echo "  update_password <user> <pass>  - Update user password and restart container"
     exit 1
 }
 
@@ -42,7 +44,7 @@ add_user() {
     fi
 
     echo "Building base image if needed..."
-    # Use robust PROJECT_ROOT path
+     # Use robust PROJECT_ROOT path
     docker build -t "$BASE_IMAGE_NAME" -f "$PROJECT_ROOT/dockerfile.example" "$PROJECT_ROOT"
 
     local port
@@ -64,8 +66,8 @@ add_user() {
         --shm-size="2gb" \
         "$BASE_IMAGE_NAME"
 
-    # Save to config
-    echo "${user}:${port}" >> "$CONFIG_FILE"
+    # Save to config (user:port:password)
+    echo "${user}:${port}:${password}" >> "$CONFIG_FILE"
     echo "User '$user' created! Connect via localhost:${port}"
 }
 
@@ -88,6 +90,48 @@ remove_user() {
     echo "Note: Data volume 'remote_dev_home_${user}' was NOT deleted. Remove manually if needed: docker volume rm remote_dev_home_${user}"
 }
 
+update_password() {
+    local user="$1"
+    local new_password="$2"
+    
+    if [[ -z "$user" ]] || [[ -z "$new_password" ]]; then
+        echo "Usage: $0 update_password <username> <new_password>"
+        exit 1
+    fi
+
+    if ! grep -q "^${user}:" "$CONFIG_FILE"; then
+        echo "Error: User '$user' not found."
+        exit 1
+    fi
+     
+    # Get existing port
+    local port
+    port=$(grep "^${user}:" "$CONFIG_FILE" | cut -d: -f2)
+
+    echo "Updating password for '$user'..."
+    
+    # Update Config File
+    grep -v "^${user}:" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp"
+    echo "${user}:${port}:${new_password}" >> "${CONFIG_FILE}.tmp"
+    mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
+    
+    echo "Restarting container with new password..."
+    docker stop "dev-${user}" >/dev/null
+    docker rm "dev-${user}" >/dev/null
+    
+    docker run -d \
+        --name "dev-${user}" \
+        --restart unless-stopped \
+        -p "${port}:3389" \
+        -v "remote_dev_home_${user}:/home/${user}" \
+        -e "USER_NAME=${user}" \
+        -e "TESTDEV_PASSWORD=${new_password}" \
+        --shm-size="2gb" \
+        "$BASE_IMAGE_NAME" >/dev/null
+        
+    echo "Password updated successfully!"
+}
+
 list_users() {
     echo "Active Users:"
     echo "USER       PORT    STATUS"
@@ -97,7 +141,7 @@ list_users() {
         return
     fi
     
-    while IFS=: read -r user port; do
+    while IFS=: read -r user port password; do
         local status
         status=$(docker inspect -f '{{.State.Status}}' "dev-${user}" 2>/dev/null || echo "stopped/missing")
         printf "%-10s %-7s %s\n" "$user" "$port" "$status"
@@ -142,6 +186,10 @@ case "${1:-}" in
     backup)
         if [[ -z "${2:-}" ]]; then usage; fi
         backup_user "$2"
+        ;;
+    update_password)
+        if [[ -z "${2:-}" ]]; then usage; fi
+        update_password "$2" "${3:-}"
         ;;
     *)
         usage

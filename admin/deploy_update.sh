@@ -59,7 +59,10 @@ if [[ ! -f "$CONFIG_FILE" ]] || [[ ! -s "$CONFIG_FILE" ]]; then
 fi
 
 echo "[2/3] Updating containers..."
-while IFS=: read -r user port; do
+while IFS=: read -r user port password; do
+    # Fallback if password is empty (migration support)
+    pass="${password:-$user}"
+    
     echo "Processing User: $user (Port $port)..."
     
     # 2a. Stop and Remove old container
@@ -67,18 +70,13 @@ while IFS=: read -r user port; do
     docker rm "dev-${user}" >/dev/null 2>&1 || true
     
     # 2b. Start new container (reattaching same volume)
-    # Note: We re-read the environment variable logic if you stored passwords in config, 
-    # but for now we default to user-as-password or env var if we tracked it.
-    # To keep it simple, we assume the default password or you'd need to store password in users.conf too.
-    # For now, let's keep the existing password logic (defaulting to username or generic testdev).
-    
     docker run -d \
         --name "dev-${user}" \
         --restart unless-stopped \
         -p "${port}:3389" \
         -v "remote_dev_home_${user}:/home/${user}" \
         -e "USER_NAME=${user}" \
-        -e "TESTDEV_PASSWORD=${user}" \
+        -e "TESTDEV_PASSWORD=${pass}" \
         --shm-size="2gb" \
         "$BASE_IMAGE_NAME" >/dev/null
         
