@@ -191,6 +191,9 @@ case "${1:-}" in
         if [[ -z "${2:-}" ]]; then usage; fi
         update_password "$2" "${3:-}"
         ;;
+    -h|--help)
+        usage
+        ;;
     *)
         usage
         ;;

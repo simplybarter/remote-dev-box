@@ -1,7 +1,19 @@
 #!/bin/bash
 set -e
 
+
+if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+    echo "Usage: $0"
+    echo ""
+    echo "Displays a dashboard of:"
+    echo "  1. Active Containers (CPU & RAM usage)"
+    echo "  2. Disk Usage (User Data Volumes)"
+    echo ""
+    exit 0
+fi
+
 echo "=============================================================================="
+
 echo " 🟢 ACTIVE CONTAINERS (Current CPU & RAM Usage)"
 echo "=============================================================================="
 # --no-stream takes a single snapshot instead of a live stream

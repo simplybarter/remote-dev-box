@@ -10,10 +10,23 @@ BASE_IMAGE_NAME="remote-dev-image"
 DEFAULT_DOCKERFILE="$PROJECT_ROOT/dockerfile"
 CUSTOM_DOCKERFILE=""
 
+
+usage() {
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  --dockerfile <path>   Specify a custom Dockerfile path"
+    echo "  -h, --help            Show this help message"
+    echo ""
+    echo "This script rebuilds the base image and updates all user containers."
+    exit 0
+}
+
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --dockerfile) CUSTOM_DOCKERFILE="$2"; shift ;;
+        -h|--help) usage ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift

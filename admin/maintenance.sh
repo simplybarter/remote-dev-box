@@ -1,7 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
+
+if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+    echo "Usage: $0"
+    echo ""
+    echo "This script cleans up Docker resources to free up disk space."
+    echo "It performs:"
+    echo "  1. docker system prune -f (containers, networks, dangling images)"
+    echo "  2. docker builder prune -a -f (build cache)"
+    echo "  3. docker volume prune -f (unused volumes)"
+    exit 0
+fi
+
 echo "=== Docker Space Maintenance ==="
+
 echo "WARNING: This will remove stopped containers, unused networks, dangling images, and UNUSED VOLUMES."
 echo "Active user data volumes (attached to running containers) will be SAFE."
 echo "Press Ctrl+C to cancel in 5 seconds..."
