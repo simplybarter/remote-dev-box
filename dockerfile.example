@@ -101,6 +101,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && npm install -g @google/gemini-cli@latest \
   # Install OpenAI Codex CLI system-wide
   && npm install -g @openai/codex@latest \
+  # Install OpenCode AI CLI system-wide
+  && npm install -g opencode-ai@latest \
   # Install pnpm system-wide
   && npm install -g pnpm@latest
 

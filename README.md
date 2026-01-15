@@ -64,6 +64,7 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 *   **Antigravity**: Google's AI-first IDE (`antigravity`).
 *   **Gemini CLI**: Official AI command line tool (`@google/gemini-cli@latest`).
 *   **Codex CLI**: OpenAI's coding agent (`@openai/codex@latest`).
+*   **OpenCode AI**: Advanced coding assistant (`opencode-ai@latest`).
 *   **GitHub Copilot CLI**: CLI for GitHub Copilot (`gh copilot` / `github-copilot-cli`).
 *   **Cursor**: AI Code Editor (CLI Agent: `agent`, `cursor-agent`).
 *   **Terminal Editors**: `vim`, `nano`.
