@@ -2,7 +2,9 @@
 set -euo pipefail
 
 # Configuration
-CONFIG_FILE="$(dirname "$0")/users.conf"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+CONFIG_FILE="$SCRIPT_DIR/users.conf"
 BASE_IMAGE_NAME="remote-dev-image"
 START_PORT=3400
 
@@ -40,7 +42,8 @@ add_user() {
     fi
 
     echo "Building base image if needed..."
-    docker build -t "$BASE_IMAGE_NAME" -f ../dockerfile ../
+    # Use robust PROJECT_ROOT path
+    docker build -t "$BASE_IMAGE_NAME" -f "$PROJECT_ROOT/dockerfile.example" "$PROJECT_ROOT"
 
     local port
     port=$(get_next_port)
@@ -104,19 +107,24 @@ list_users() {
 backup_user() {
     local user="$1"
     local volume="remote_dev_home_${user}"
+    
+    # Setup Backup Directory
+    local backup_dir="$PROJECT_ROOT/backups"
+    mkdir -p "$backup_dir"
+    
     local timestamp
     timestamp=$(date +%Y%m%d_%H%M%S)
     local backup_file="backup_${user}_${timestamp}.tar.gz"
 
-    echo "Backing up volume '$volume' to $backup_file..."
+    echo "Backing up volume '$volume' to $backup_dir/$backup_file..."
     
     docker run --rm \
         -v "$volume":/source \
-        -v "$(pwd)":/backup \
+        -v "$backup_dir":/backup \
         ubuntu:24.04 \
         tar czf "/backup/$backup_file" -C /source .
         
-    echo "Backup complete: $backup_file"
+    echo "Backup complete: $backup_dir/$backup_file"
 }
 
 case "${1:-}" in
