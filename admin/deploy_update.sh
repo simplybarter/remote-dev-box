@@ -63,7 +63,7 @@ if [ -d "$PROJECT_ROOT/backups" ]; then chmod 700 "$PROJECT_ROOT/backups"; fi
 if [ -d "$PROJECT_ROOT/logs" ]; then chmod 700 "$PROJECT_ROOT/logs"; fi
 
 # Secure text files in root
-for file in "README.md" ".gitignore" "dockerfile.example" "xrdp.ini" "dockerfile" "LICENSE"; do
+for file in "README.md" ".gitignore" "dockerfile.example" "xrdp.ini" "dockerfile" "LICENSE" "CONTRIBUTING.md"; do
     if [ -f "$PROJECT_ROOT/$file" ]; then
         chmod 600 "$PROJECT_ROOT/$file"
     fi
