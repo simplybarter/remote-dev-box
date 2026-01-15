@@ -68,6 +68,10 @@ This project supports multi-user deployment where each user gets their own isola
     *   `list`: Shows all active users and their ports.
     *   `backup <username>`: Creates a `.tar.gz` backup of the user's home directory.
 
+4.  **`./admin/monitor.sh`**:
+    *   Shows a dashboard of current CPU/RAM usage per user.
+    *   Lists the disk space consumed by each user's volume.
+
 2.  **`./admin/deploy_update.sh`**:
     *   Updates the entire fleet.
     *   Rebuilds the Docker image.
