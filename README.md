@@ -33,6 +33,7 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 ### Editors & IDEs
 *   **Visual Studio Code**: Pre-installed (`code`).
 *   **Antigravity**: Google's AI-first IDE (`antigravity`).
+*   **Gemini CLI**: Official AI command line tool (`@google/gemini-cli@latest`).
 *   **Cursor**: AI Code Editor (CLI Agent: `agent`, `cursor-agent`).
 *   **Terminal Editors**: `vim`, `nano`.
 
