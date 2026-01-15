@@ -73,6 +73,8 @@ This project supports multi-user deployment where each user gets their own isola
     *   Lists the disk space consumed by each user's volume.
 
 2.  **`./admin/deploy_update.sh`**:
+    *   `./admin/deploy_update.sh`: Builds using the default `dockerfile`.
+    *   `./admin/deploy_update.sh --dockerfile <path>`: Builds using a custom Dockerfile.
     *   Updates the entire fleet.
     *   Rebuilds the Docker image.
     *   Recreates every user container (preserving data) to apply new tools/fixes.

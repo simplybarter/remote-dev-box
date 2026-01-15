@@ -2,14 +2,32 @@
 set -euo pipefail
 
 # Configuration
-CONFIG_FILE="$(dirname "$0")/users.conf"
+# Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+CONFIG_FILE="$SCRIPT_DIR/users.conf"
 BASE_IMAGE_NAME="remote-dev-image"
+DEFAULT_DOCKERFILE="$PROJECT_ROOT/dockerfile"
+CUSTOM_DOCKERFILE=""
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --dockerfile) CUSTOM_DOCKERFILE="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+USED_DOCKERFILE="${CUSTOM_DOCKERFILE:-$DEFAULT_DOCKERFILE}"
 
 echo "=== Starting Global Update Deployment ==="
+echo "Project Root: $PROJECT_ROOT"
+echo "Using Dockerfile: $USED_DOCKERFILE"
 
 # 1. Rebuild the master image
 echo "[1/3] Rebuilding Base Image ($BASE_IMAGE_NAME)..."
-docker build -t "$BASE_IMAGE_NAME" -f ../dockerfile ../
+docker build -t "$BASE_IMAGE_NAME" -f "$USED_DOCKERFILE" "$PROJECT_ROOT"
 
 # 2. Iterate through all users
 if [[ ! -f "$CONFIG_FILE" ]] || [[ ! -s "$CONFIG_FILE" ]]; then
