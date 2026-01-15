@@ -22,6 +22,12 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 > *   To change a password, use the command: `./admin/manage_users.sh update_password <user> <new_pass>`.
 > *   This operation **requires a container restart**, which will verify that the new password works.
 
+> [!WARNING]
+> **Network Security**:
+> *   This environment is designed for **private network use**.
+> *   If hosting on a public IP, you **MUST** use a **VPN** (e.g., WireGuard, OpenVPN) to access it.
+> *   Do **NOT** expose the RDP ports (3400+) directly to the internet.
+
 ## 🚀 Quick Start
 
 
