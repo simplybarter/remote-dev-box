@@ -77,7 +77,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && apt-get install -y --no-install-recommends nodejs \
   && rm -rf /var/lib/apt/lists/* \
   # Install Gemini CLI system-wide
-  && npm install -g @google/gemini-cli@latest
+  && npm install -g @google/gemini-cli@latest \
+  # Install OpenAI Codex CLI system-wide
+  && npm install -g @openai/codex@latest
 
 # uv via pipx (apt-first overall, pip second)
 ENV PIPX_HOME=/opt/pipx
