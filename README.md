@@ -2,7 +2,28 @@
 
 A fully featured, Dockerized remote development environment running Ubuntu 24.04 with an XFCE desktop, accessible via RDP.
 
+
+## ⚠️ Important Warnings
+
+> [!CAUTION]
+> **Container Lifecycle**: Running `./admin/deploy_update.sh` **DESTROYS and RECREATES** all user containers.
+> *   **System Changes Lost**: Any packages installed via `apt` or system files modified *inside* the container will be **LOST**.
+> *   **Persist Changes**: To make system changes permanent (e.g., installing a new library), you **MUST** add them to your `dockerfile`.
+
+> [!IMPORTANT]
+> **Data Persistence**:
+> *   Your home directory (`/home/<username>`) is mounted as a Docker volume.
+> *   Files stored here (code, configs, downloads) **WILL PERSIST** across updates and restarts.
+> *   ALWAYS store your work in your home directory.
+
+> [!NOTE]
+> **Password Management**:
+> *   Passwords are managed via `admin/users.conf`.
+> *   To change a password, use the command: `./admin/manage_users.sh update_password <user> <new_pass>`.
+> *   This operation **requires a container restart**, which will verify that the new password works.
+
 ## 🚀 Quick Start
+
 
 1.  **Build the Image**:
     Run the update script. It will automatically create a local `dockerfile` from `dockerfile.example` if one doesn't exist, and then build it.
