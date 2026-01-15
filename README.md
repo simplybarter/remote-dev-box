@@ -38,7 +38,7 @@ A fully featured, Dockerized remote development environment running Ubuntu 24.04
 
 ### Development Stack
 *   **Node.js**: Version 22.x (LTS)
-*   **Python**: 3.x
+*   **Python**: 3.12 (System Default) & 3.14 (Latest Stable)
 *   **Shell**: `zsh` (with `oh-my-zsh` ready), `bash`.
 *   **Git**: Version control.
 *   **SSH**: `openssh-client`.

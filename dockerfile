@@ -24,6 +24,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     psmisc \
   && rm -rf /var/lib/apt/lists/*
 
+# Install Python 3.14 via deadsnakes PPA (includes 3.12 updates via python3-full)
+RUN apt-get update && apt-get install -y software-properties-common \
+    && add-apt-repository -y ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       python3-full \
+       python3.14 \
+       python3.14-venv \
+       python3.14-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Reinstall xorgxrdp to ensure modules are built against current Xorg
 RUN apt-get update && apt-get install -y --reinstall xorgxrdp && rm -rf /var/lib/apt/lists/*
 
