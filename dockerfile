@@ -24,6 +24,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     psmisc \
   && rm -rf /var/lib/apt/lists/*
 
+# Install GitHub CLI (gh)
+RUN mkdir -p -m 755 /etc/apt/keyrings \
+    && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+    && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install GitHub Copilot CLI Extension
+# Note: We install it system-wide or let users install it.
+# The user asked for the specific curl command. Since it usually installs to user space,
+# we'll try to run it. However, the script might need interactivity or user context.
+# A better approach for a shared image is to provide 'gh' and let users 'gh auth login' -> 'gh extension install github/gh-copilot'.
+# BUT, the user explicitly asked for "curl ... | bash".
+# That script installs the `github-copilot-cli` binary wrapper.
+# We will run it as requested.
+RUN curl -fsSL https://gh.io/copilot-install | bash
+
 # Install Python 3.14 via deadsnakes PPA (includes 3.12 updates via python3-full)
 RUN apt-get update && apt-get install -y software-properties-common \
     && add-apt-repository -y ppa:deadsnakes/ppa \
