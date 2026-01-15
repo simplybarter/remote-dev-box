@@ -10,7 +10,15 @@ Thank you for your interest in contributing! This project relies on a combinatio
 
 ## 🚀 Getting Started
 
-1.  **Fork and Clone** the repository.
+1.  **Fork and Clone** the repository:
+    ```bash
+    # Using GitHub CLI (Recommended)
+    gh repo fork <your-username>/remote-dev --clone
+
+    # Or using standard Git
+    git clone https://github.com/<your-username>/remote-dev.git
+    cd remote-dev
+    ```
 2.  **Initialize the Environment**:
     ```bash
     ./admin/deploy_update.sh
