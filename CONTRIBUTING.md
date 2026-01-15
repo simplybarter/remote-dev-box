@@ -44,7 +44,9 @@ Thank you for your interest in contributing! This project relies on a combinatio
     ```bash
     ./admin/manage_users.sh add testuser
     ```
-*   Connect via RDP (default port `3400`) to visually verify desktop changes.
+*   Connect via RDP to visually verify desktop changes.
+    *   **Note**: Each user is assigned a **dedicated port** (starting at `3400`).
+    *   Example: `localhost:3400`
 
 ## 📋 Pull Request Process
 1.  Ensure your code follows the existing style (ShellCheck for scripts).
