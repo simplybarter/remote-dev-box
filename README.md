@@ -1,6 +1,6 @@
-# Remote Dev Environment (Ubuntu 24.04 + XFCE + XRDP)
+# AI first Agentic Remote Development Environment (Ubuntu 24.04 + XFCE + XRDP)
 
-A fully featured, Dockerized remote development environment running Ubuntu 24.04 with an XFCE desktop, accessible via RDP.
+A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.04 with an XFCE desktop, accessible via RDP.
 
 
 ## ⚠️ Important Warnings
