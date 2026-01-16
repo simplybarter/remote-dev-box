@@ -2,11 +2,16 @@
 
 Thank you for your interest in contributing! This project relies on a combination of Docker, Shell scripts, and XFCE/XRDP configurations.
 
+## 💡 Discussions
+
+If you would like something added to the default build (e.g., new tools, languages, or extensions), please use **GitHub Discussions** to propose it first. We aim to keep the base image balanced between feature-rich and lightweight.
+
 ## 🛠️ Project Structure
 *   `dockerfile`: The core image definition (generated from `dockerfile.example`).
 *   `admin/`: Management scripts (`deploy_update.sh`, `manage_users.sh`, etc.).
 *   `logs/`: Build and update logs.
 *   `backups/`: User home directory backups.
+
 
 ## 🚀 Getting Started
 
