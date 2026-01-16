@@ -124,6 +124,7 @@ while IFS=: read -r user port password; do
         -e "USER_NAME=${user}" \
         -e "TESTDEV_PASSWORD=${pass}" \
         --shm-size="2gb" \
+        --security-opt seccomp=unconfined \
         "$BASE_IMAGE_NAME" >/dev/null
         
     echo "  -> Updated dev-${user} successfully."

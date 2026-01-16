@@ -134,10 +134,11 @@ RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd6
     && apt-get update \
     && apt-get install -y ./google-chrome-stable_current_amd64.deb \
     && rm google-chrome-stable_current_amd64.deb \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
+    #&& rm -rf /var/lib/apt/lists/* \
     # Wrapper for no-sandbox
-    && echo '#!/bin/bash\n/opt/google/chrome/google-chrome --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/google-chrome \
-    && chmod +x /usr/local/bin/google-chrome
+    #&& echo '#!/bin/bash\n/opt/google/chrome/google-chrome --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/google-chrome \
+    #&& chmod +x /usr/local/bin/google-chrome
 
 
 
@@ -147,10 +148,11 @@ RUN mkdir -p /etc/apt/keyrings \
     && echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
     && apt-get update \
     && apt-get install -y antigravity \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
+    #&& rm -rf /var/lib/apt/lists/* \
     # Create wrapper for no-sandbox and gpu disabling
-    && echo '#!/bin/bash\n/usr/share/antigravity/bin/antigravity --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/antigravity \
-    && chmod +x /usr/local/bin/antigravity
+    #&& echo '#!/bin/bash\n/usr/share/antigravity/bin/antigravity --no-sandbox --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/antigravity \
+    #&& chmod +x /usr/local/bin/antigravity
 
 
 
@@ -158,8 +160,8 @@ RUN mkdir -p /etc/apt/keyrings \
 
 
 # Create a wrapper for code to run with --no-sandbox
-RUN echo '#!/bin/bash\n/usr/share/code/code --no-sandbox --unity-launch --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/code \
-    && chmod +x /usr/local/bin/code
+#RUN echo '#!/bin/bash\n/usr/share/code/code --no-sandbox --unity-launch --disable-dev-shm-usage --disable-gpu "$@"' > /usr/local/bin/code \
+#    && chmod +x /usr/local/bin/code
 
 
 
