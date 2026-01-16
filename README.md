@@ -143,7 +143,7 @@ All scripts support the `-h` or `--help` flag to display usage instructions.
 ## ⚙️ Configuration Details
 
 *   **XRDP Backend**: Uses `Xvnc` (TigerVNC) instead of Xorg for better stability in Docker.
-*   **Sandboxing**: GUI apps (Chrome, VS Code, Antigravity) are wrapped with `--no-sandbox --disable-dev-shm-usage` to prevent crashes in the containerized environment.
+*   **Sandboxing**: The container runs with `--security-opt seccomp=unconfined` to allow Electron apps (Chrome, VS Code) to use their native sandboxing mechanisms.
 *   **Persistence**: The home directory `/home/testdev` is persisted via a Docker volume (`testdev_home`).
 
 ## 🐞 Troubleshooting
@@ -153,7 +153,8 @@ All scripts support the `-h` or `--help` flag to display usage instructions.
     *   Ensure you are using the `Xvnc` backend (configured in `xrdp.ini`).
 
 *   **GUI Apps Crashing**:
-    *   Ensure you are running them via their wrappers (e.g., just type `google-chrome` or `code`). Direct binary execution might fail without the `--no-sandbox` flag.
+    *   Previously, wrappers were needed (`--no-sandbox`). Now, `seccomp=unconfined` handles this native support.
+    *   If issues persist, check `admin/deploy_update.sh` to ensure the security option is being passed to `docker run`.
 
 *   **"Connection Refused" during build**:
     *   Some download URLs might block automated requests. The Dockerfile uses alternative installation methods (CLI) or user-agent spoofing where possible.

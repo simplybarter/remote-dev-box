@@ -44,3 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     *   Resource monitoring dashboard (`admin/monitor.sh`).
     - Maintenance utilities (`admin/maintenance.sh`).
     - Persistent home directories via Docker volumes.
+
+### Changed
+- **Security**: Switched from app-level `--no-sandbox` wrappers to container-level `--security-opt seccomp=unconfined`. This allows Electron apps (VS Code, Chrome) to run with their native sandboxing configurations.
+- **Docker**: Removed `--no-sandbox` wrappers for Chrome, Antigravity, and VS Code in `dockerfile` as they are no longer needed.
