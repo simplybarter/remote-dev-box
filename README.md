@@ -109,6 +109,7 @@ All scripts support the `-h` or `--help` flag to display usage instructions.
 
 2.  **`./admin/deploy_update.sh`**:
     *   `./admin/deploy_update.sh`: Builds using the default `dockerfile`.
+    *   `./admin/deploy_update.sh --default`: Resets `dockerfile` from `dockerfile.example` before building.
     *   `./admin/deploy_update.sh --dockerfile <path>`: Builds using a custom Dockerfile.
     *   Updates the entire fleet.
     *   Rebuilds the Docker image.

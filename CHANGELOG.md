@@ -38,8 +38,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - FileZilla (FTP/SFTP Client).
     - DB Clients: `sqlite3`, `psql` (PostgreSQL), `redis-tools`.
 - **Infrastructure**:
-    - Automated user management scripts (`admin/manage_users.sh`).
-    - Self-updating deployment script (`admin/deploy_update.sh`).
-    - Resource monitoring dashboard (`admin/monitor.sh`).
+    *   Automated user management scripts (`admin/manage_users.sh`).
+    *   Self-updating deployment script (`admin/deploy_update.sh`).
+        *   Added `--default` flag to easily reset local `dockerfile` from `dockerfile.example`.
+    *   Resource monitoring dashboard (`admin/monitor.sh`).
     - Maintenance utilities (`admin/maintenance.sh`).
     - Persistent home directories via Docker volumes.
