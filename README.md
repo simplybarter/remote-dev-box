@@ -38,6 +38,7 @@ A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.0
 
     # Or using standard Git
     git clone https://github.com/simplybarter/remote-dev-box.git
+    
     cd remote-dev-box
     ```
 
