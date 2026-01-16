@@ -18,12 +18,13 @@ If you would like something added to the default build (e.g., new tools, languag
 1.  **Fork and Clone** the repository:
     ```bash
     # Using GitHub CLI (Recommended)
-    gh repo fork <your-username>/remote-dev --clone
+    gh repo fork simplybarter/remote-dev-box --clone
 
     # Or using standard Git
-    git clone https://github.com/<your-username>/remote-dev.git
-    cd remote-dev
+    git clone https://github.com/simplybarter/remote-dev-box.git
+    cd remote-dev-box
     ```
+    
 2.  **Initialize the Environment**:
     ```bash
     ./admin/deploy_update.sh

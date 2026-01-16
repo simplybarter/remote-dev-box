@@ -30,8 +30,19 @@ A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.0
 
 ## 🚀 Quick Start
 
+1.  **Fork and Clone the repository**:
 
-1.  **Build the Image**:
+    ```bash
+    # Using GitHub CLI (Recommended)
+    gh repo fork simplybarter/remote-dev-box --clone
+
+    # Or using standard Git
+    git clone https://github.com/simplybarter/remote-dev-box.git
+    cd remote-dev-box
+    ```
+
+
+2.  **Build the Image**:
     Run the update script. It will automatically create a local `dockerfile` from `dockerfile.example` if one doesn't exist, and then build it.
     ```bash
     ./admin/deploy_update.sh
@@ -39,20 +50,20 @@ A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.0
     > **Note**: Your local `dockerfile` is `.gitignore`'d. You can customize it without fear of it being overwritten by future git pulls.
 
 
-2.  **Create a User**:
+3.  **Create a User**:
     Use the admin script to create your first user. It will assign a dedicated port and persistent home volume.
     ```bash
     ./admin/manage_users.sh add myuser
     # Output: User 'myuser' created! Connect via localhost:3400
     ```
 
-3.  **Connect**:
+4.  **Connect**:
     *   Open your RDP client (Remmina, Microsoft Remote Desktop, etc.).
     *   Connect to: `localhost:3400` (or whatever specific port was assigned)
     *   **User**: `myuser`
     *   **Password**: `myuser` (default, or whatever you passed to the script)
 
-4.  **Manage**:
+5.  **Manage**:
     *   **List Users**: `./admin/manage_users.sh list`
     *   **Update All**: `./admin/deploy_update.sh`
 
