@@ -16,6 +16,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  --dockerfile <path>   Specify a custom Dockerfile path"
+    echo "  --default             Reset 'dockerfile' to match 'dockerfile.example'"
     echo "  -h, --help            Show this help message"
     echo ""
     echo "This script rebuilds the base image and updates all user containers."
@@ -23,9 +24,12 @@ usage() {
 }
 
 # Parse arguments
+USE_DEFAULT=false
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --dockerfile) CUSTOM_DOCKERFILE="$2"; shift ;;
+        --default) USE_DEFAULT=true ;;
         -h|--help) usage ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
@@ -33,6 +37,18 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 USED_DOCKERFILE="${CUSTOM_DOCKERFILE:-$DEFAULT_DOCKERFILE}"
+
+# Handle --default flag: Reset dockerfile from example
+if [[ "$USE_DEFAULT" == "true" ]]; then
+    EXAMPLE_DOCKERFILE="$PROJECT_ROOT/dockerfile.example"
+    if [[ -f "$EXAMPLE_DOCKERFILE" ]]; then
+        echo "Resetting dockerfile from dockerfile.example (--default used)..."
+        cp "$EXAMPLE_DOCKERFILE" "$DEFAULT_DOCKERFILE"
+    else
+        echo "ERROR: dockerfile.example not found!"
+        exit 1
+    fi
+fi
 
 # Auto-initialize Dockerfile if missing (First Run Scenario)
 if [[ "$USED_DOCKERFILE" == "$DEFAULT_DOCKERFILE" ]] && [[ ! -f "$DEFAULT_DOCKERFILE" ]]; then
