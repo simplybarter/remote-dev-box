@@ -1,6 +1,8 @@
 services:
   testdev:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile
     container_name: dev-testdev
     restart: unless-stopped
     ports:

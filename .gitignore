@@ -2,3 +2,4 @@ logs/
 admin/users.conf
 dockerfile
 backups/
+admin/deploy_remote.sh

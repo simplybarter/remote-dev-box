@@ -17,7 +17,7 @@ fi
 usage() {
     echo "Usage: $0 {add|remove|list|backup|update_password} [args...]"
     echo "  add <username> [password]      - Create a new user container"
-    echo "  remove <username>              - Stop and remove a user container"
+    echo "  remove <username> [--purge]    - Stop and remove a user container"
     echo "  list                           - List active users and ports"
     echo "  backup <username>              - Backup user home directory"
     echo "  update_password <user> <pass>  - Update user password and restart container"
@@ -74,6 +74,7 @@ add_user() {
 
 remove_user() {
     local user="$1"
+    local purge="${2:-false}"
     
     if ! grep -q "^${user}:" "$CONFIG_FILE"; then
         echo "Error: User '$user' not found."
@@ -89,7 +90,14 @@ remove_user() {
     chmod 600 "$CONFIG_FILE"
     
     echo "User '$user' removed."
-    echo "Note: Data volume 'remote_dev_home_${user}' was NOT deleted. Remove manually if needed: docker volume rm remote_dev_home_${user}"
+    
+    if [[ "$purge" == "true" ]]; then
+        echo "Purging data volume 'remote_dev_home_${user}'..."
+        docker volume rm "remote_dev_home_${user}" || true
+        echo "Data volume purged."
+    else
+        echo "Note: Data volume 'remote_dev_home_${user}' was NOT deleted. Remove manually if needed: docker volume rm remote_dev_home_${user}"
+    fi
 }
 
 update_password() {
@@ -183,7 +191,14 @@ case "${1:-}" in
         ;;
     remove)
         if [[ -z "${2:-}" ]]; then usage; fi
-        remove_user "$2"
+        if [[ "${2:-}" == "--purge" ]]; then
+             if [[ -z "${3:-}" ]]; then usage; fi
+             remove_user "$3" "true"
+        elif [[ "${3:-}" == "--purge" ]]; then
+             remove_user "$2" "true"
+        else
+             remove_user "$2" "false"
+        fi
         ;;
     list)
         list_users
