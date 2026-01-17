@@ -16,11 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   xfwm4 \
   xfconf \
   xfce4-terminal \
+  xfce4-screenshooter \
   gvfs gvfs-backends \
   xrdp xorgxrdp \
   sudo \
   git curl wget ca-certificates openssh-client \
   vim nano htop jq ripgrep tmux zsh fzf \
+  tree \
   iputils-ping iproute2 \
   sqlite3 postgresql-client redis-tools \
   unzip zip p7zip-full \
@@ -54,15 +56,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && apt-get install -y --no-install-recommends nodejs \
   && npm install -g npm@latest pnpm@latest \
   && npm install -g @google/gemini-cli@latest @openai/codex@latest opencode-ai@latest @github/copilot@latest \
-  && find /usr/lib/node_modules -type d \( -name "*musl*" -o -name "*win32*" -o -name "*darwin*" -o -name "*arm64*" -o -name "*aarch64*" \) -exec rm -rf {} + \
+  && find /usr/lib/node_modules -type d \( -name "*win32*" -o -name "*darwin*" -o -name "*arm64*" -o -name "*aarch64*" \) -exec rm -rf {} + \
   && npm cache clean --force \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Antigravity via official APT repository
+# Install Antigravity and Cursor via official repositories
 RUN mkdir -p /etc/apt/keyrings \
   && curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg \
   && echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \
-  && apt-get update && apt-get install -y --no-install-recommends antigravity \
+  && curl -fsSL https://downloads.cursor.com/keys/anysphere.asc | gpg --dearmor --yes -o /etc/apt/keyrings/cursor.gpg \
+  && echo "deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/cursor.gpg] https://downloads.cursor.com/aptrepo stable main" > /etc/apt/sources.list.d/cursor.list \
+  && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor --yes -o /etc/apt/keyrings/google-chrome.gpg \
+  && echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+  && apt-get update && apt-get install -y --no-install-recommends antigravity cursor google-chrome-stable \
   && find /usr/share/antigravity/locales -type f ! -name "en-US.pak" -delete \
   && find /usr/share/antigravity/resources/app/extensions -type d \( -name "markdown-math" -o -name "php-language-features" \) -exec rm -rf {} + \
   && apt-get clean && rm -rf /var/lib/apt/lists/*

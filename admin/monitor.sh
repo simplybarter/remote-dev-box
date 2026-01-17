@@ -7,7 +7,9 @@ if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
     echo ""
     echo "Displays a dashboard of:"
     echo "  1. Active Containers (CPU & RAM usage)"
-    echo "  2. Disk Usage (User Data Volumes)"
+    echo "  2. Container Storage (Writable layer & Virtual size)"
+    echo "  3. Base Image Size"
+    echo "  4. Disk Usage (User Data Volumes)"
     echo ""
     exit 0
 fi
@@ -18,6 +20,18 @@ echo " 🟢 ACTIVE CONTAINERS (Current CPU & RAM Usage)"
 echo "=============================================================================="
 # --no-stream takes a single snapshot instead of a live stream
 docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}" | sed 's/^/  /'
+
+echo ""
+echo "=============================================================================="
+echo " 📦 CONTAINER STORAGE (Writable Layer vs Virtual Size)"
+echo "=============================================================================="
+docker ps -a --filter "name=dev-" --format "table {{.Names}}\t{{.Size}}" | sed 's/^/  /'
+
+echo ""
+echo "=============================================================================="
+echo " 🖼️  BASE IMAGE SIZE"
+echo "=============================================================================="
+docker images "remote-dev-image" --format "  {{.Repository}}: {{.Size}}" || echo "  (Base image not found)"
 
 echo ""
 echo "=============================================================================="
