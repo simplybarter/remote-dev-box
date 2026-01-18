@@ -6,7 +6,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 CONFIG_FILE="$SCRIPT_DIR/users.conf"
-BASE_IMAGE_NAME="remote-dev-image"
+BASE_IMAGE_NAME="remote-dev-box-image"
 DEFAULT_DOCKERFILE="$PROJECT_ROOT/dockerfile"
 CUSTOM_DOCKERFILE=""
 
@@ -112,12 +112,12 @@ while IFS=: read -r user port password; do
     echo "Processing User: $user (Port $port)..."
     
     # 2a. Stop and Remove old container
-    docker stop "dev-${user}" >/dev/null 2>&1 || true
-    docker rm "dev-${user}" >/dev/null 2>&1 || true
+    docker stop "remote-dev-box-${user}" >/dev/null 2>&1 || true
+    docker rm "remote-dev-box-${user}" >/dev/null 2>&1 || true
     
     # 2b. Start new container (reattaching same volume)
     docker run -d \
-        --name "dev-${user}" \
+        --name "remote-dev-box-${user}" \
         --restart unless-stopped \
         -p "${port}:3389" \
         -v "remote_dev_home_${user}:/home/${user}" \
@@ -128,7 +128,7 @@ while IFS=: read -r user port password; do
         --security-opt seccomp=unconfined \
         "$BASE_IMAGE_NAME" >/dev/null
         
-    echo "  -> Updated dev-${user} successfully."
+    echo "  -> Updated remote-dev-box-${user} successfully."
 done < "$CONFIG_FILE"
 
 echo "[3/3] Deployment Complete!"

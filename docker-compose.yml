@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-    container_name: dev-testdev
+    container_name: remote-dev-box-testdev
     restart: unless-stopped
     ports:
       - "3390:3389"

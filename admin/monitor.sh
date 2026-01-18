@@ -25,13 +25,13 @@ echo ""
 echo "=============================================================================="
 echo " 📦 CONTAINER STORAGE (Writable Layer vs Virtual Size)"
 echo "=============================================================================="
-docker ps -a --filter "name=dev-" --format "table {{.Names}}\t{{.Size}}" | sed 's/^/  /'
+docker ps -a --filter "name=remote-dev-box-" --format "table {{.Names}}\t{{.Size}}" | sed 's/^/  /'
 
 echo ""
 echo "=============================================================================="
 echo " 🖼️  BASE IMAGE SIZE"
 echo "=============================================================================="
-docker images "remote-dev-image" --format "  {{.Repository}}: {{.Size}}" || echo "  (Base image not found)"
+docker images "remote-dev-box-image" --format "  {{.Repository}}: {{.Size}}" || echo "  (Base image not found)"
 
 echo ""
 echo "=============================================================================="

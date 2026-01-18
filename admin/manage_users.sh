@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 CONFIG_FILE="$SCRIPT_DIR/users.conf"
-BASE_IMAGE_NAME="remote-dev-image"
+BASE_IMAGE_NAME="remote-dev-box-image"
 START_PORT=3400
 
 # Ensure config file exists
@@ -63,7 +63,7 @@ add_user() {
 
     # Run the container
     docker run -d \
-        --name "dev-${user}" \
+        --name "remote-dev-box-${user}" \
         --restart unless-stopped \
         -p "${port}:3389" \
         -v "remote_dev_home_${user}:/home/${user}" \
@@ -93,9 +93,9 @@ remove_user() {
         exit 1
     fi
 
-    echo "Stopping container dev-${user}..."
-    docker stop "dev-${user}" || true
-    docker rm "dev-${user}" || true
+    echo "Stopping container remote-dev-box-${user}..."
+    docker stop "remote-dev-box-${user}" || true
+    docker rm "remote-dev-box-${user}" || true
 
     # Remove from config
     grep -v "^${user}:" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp" && mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
@@ -139,11 +139,11 @@ update_password() {
     chmod 600 "$CONFIG_FILE"
     
     echo "Restarting container with new password..."
-    docker stop "dev-${user}" >/dev/null
-    docker rm "dev-${user}" >/dev/null
+    docker stop "remote-dev-box-${user}" >/dev/null
+    docker rm "remote-dev-box-${user}" >/dev/null
     
     docker run -d \
-        --name "dev-${user}" \
+        --name "remote-dev-box-${user}" \
         --restart unless-stopped \
         -p "${port}:3389" \
         -v "remote_dev_home_${user}:/home/${user}" \
@@ -168,7 +168,7 @@ list_users() {
     
     while IFS=: read -r user port password; do
         local status
-        status=$(docker inspect -f '{{.State.Status}}' "dev-${user}" 2>/dev/null || echo "stopped/missing")
+        status=$(docker inspect -f '{{.State.Status}}' "remote-dev-box-${user}" 2>/dev/null || echo "stopped/missing")
         printf "%-10s %-7s %s\n" "$user" "$port" "$status"
     done < "$CONFIG_FILE"
 }

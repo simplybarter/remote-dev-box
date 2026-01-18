@@ -19,8 +19,8 @@ echo "=========================================="
 if [ ! -f "/.dockerenv" ]; then
     echo "Running on Host. Detecting active dev containers..."
     
-    # Find containers starting with "dev-"
-    containers=$(docker ps --format "{{.Names}}" | grep "^dev-")
+    # Find containers starting with "remote-dev-box-"
+    containers=$(docker ps --format "{{.Names}}" | grep "^remote-dev-box-")
     
     if [ -z "$containers" ]; then
         echo "No active dev containers found."
