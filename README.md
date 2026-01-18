@@ -9,24 +9,28 @@ A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.0
 > **Container Lifecycle**: Running `./admin/deploy_update.sh` **DESTROYS and RECREATES** all user containers.
 > *   **System Changes Lost**: Any packages installed via `apt` or system files modified *inside* the container will be **LOST**.
 > *   **Persist Changes**: To make system changes permanent (e.g., installing a new library), you **MUST** add them to your `dockerfile`.
+> *   **Why this matters**: This "Immutable Infrastructure" approach ensures that if a user breaks their OS, a simple rebuild fixes it. It guarantees that every developer has the exact same, working environment, eliminating "it works on my machine" issues.
 
 > [!IMPORTANT]
 > **Data Persistence**:
 > *   Your home directory (`/home/<username>`) is mounted as a Docker volume.
 > *   Files stored here (code, configs, downloads) **WILL PERSIST** across updates and restarts.
 > *   ALWAYS store your work in your home directory.
+> *   **Why this matters**: This separation means you can upgrade the OS, switch tools, or fix broken system files without ever touching or risking your actual code and project data.
 
 > [!NOTE]
 > **Password Management**:
 > *   Passwords are managed via `admin/users.conf`.
 > *   To change a password, use the command: `./admin/manage_users.sh update_password <user> <new_pass>`.
 > *   This operation **requires a container restart**, which will verify that the new password works.
+> *   **Why this matters**: Centralized password management prevents drift between the container's internal state and your deployment verification. It ensures you always know how to access your boxes.
 
 > [!WARNING]
 > **Network Security**:
 > *   This environment is designed for **private network use**.
 > *   If hosting on a public IP, you **MUST** use a **VPN** (e.g., WireGuard, OpenVPN) to access it.
 > *   Do **NOT** expose the RDP ports (3400+) directly to the internet.
+> *   **Why this matters**: RDP is a high-value target for automated botnets. Even with strong passwords, exposing these ports invites thousands of login attempts per hour, slowing down your server and risking a security breach.
 
 ## 🚀 Quick Start
 
