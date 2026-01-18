@@ -16,7 +16,7 @@ fi
 
 usage() {
     echo "Usage: $0 {add|remove|list|backup|update_password} [args...]"
-    echo "  add <username> [password]      - Create a new user container"
+    echo "  add <username> [password]      - Create a new user container (generates secure password if omitted)"
     echo "  remove <username> [--purge]    - Stop and remove a user container"
     echo "  list                           - List active users and ports"
     echo "  backup <username>              - Backup user home directory"
@@ -36,7 +36,13 @@ get_next_port() {
 
 add_user() {
     local user="$1"
-    local password="${2:-$1}" # Default password is username
+    local password="$2"
+
+    # Generate secure password if not provided
+    if [[ -z "$password" ]]; then
+        password=$(openssl rand -base64 12)
+        echo "Auto-generating secure password for '$user'..."
+    fi
     
     if grep -q "^${user}:" "$CONFIG_FILE"; then
         echo "Error: User '$user' already exists."
@@ -45,7 +51,7 @@ add_user() {
 
     echo "Building base image if needed..."
      # Use robust PROJECT_ROOT path
-    docker build -t "$BASE_IMAGE_NAME" -f "$PROJECT_ROOT/dockerfile.example" "$PROJECT_ROOT"
+    docker build -t "$BASE_IMAGE_NAME" -f "$PROJECT_ROOT/dockerfile" "$PROJECT_ROOT"
 
     local port
     port=$(get_next_port)
@@ -69,7 +75,11 @@ add_user() {
     # Save to config (user:port:password)
     echo "${user}:${port}:${password}" >> "$CONFIG_FILE"
     chmod 600 "$CONFIG_FILE"
-    echo "User '$user' created! Connect via localhost:${port}"
+    echo "${user}:${port}:${password}" >> "$CONFIG_FILE"
+    chmod 600 "$CONFIG_FILE"
+    echo "User '$user' created!"
+    echo "  -> Port: $port"
+    echo "  -> Password: $password"
 }
 
 remove_user() {
