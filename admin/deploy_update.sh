@@ -124,6 +124,7 @@ while IFS=: read -r user port password; do
         -e "USER_NAME=${user}" \
         -e "TESTDEV_PASSWORD=${pass}" \
         --shm-size="2gb" \
+        --device /dev/fuse \
         --security-opt seccomp=unconfined \
         "$BASE_IMAGE_NAME" >/dev/null
         

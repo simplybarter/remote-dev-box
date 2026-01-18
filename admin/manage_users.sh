@@ -70,6 +70,8 @@ add_user() {
         -e "USER_NAME=${user}" \
         -e "TESTDEV_PASSWORD=${password}" \
         --shm-size="2gb" \
+        --device /dev/fuse \
+        --security-opt seccomp=unconfined \
         "$BASE_IMAGE_NAME"
 
     # Save to config (user:port:password)
@@ -148,6 +150,8 @@ update_password() {
         -e "USER_NAME=${user}" \
         -e "TESTDEV_PASSWORD=${new_password}" \
         --shm-size="2gb" \
+        --device /dev/fuse \
+        --security-opt seccomp=unconfined \
         "$BASE_IMAGE_NAME" >/dev/null
         
     echo "Password updated successfully!"

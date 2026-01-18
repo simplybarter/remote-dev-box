@@ -67,8 +67,14 @@ if [ ! -f /etc/xrdp/cert.pem ] || [ ! -f /etc/xrdp/key.pem ]; then
     chmod 640 /etc/xrdp/key.pem /etc/xrdp/cert.pem
 fi
 
+# Create socket dir for xrdp
+if [ ! -d /run/xrdp/sockdir ]; then
+    mkdir -p /run/xrdp/sockdir
+fi
+chmod 1777 /run/xrdp/sockdir
+
 echo "[entrypoint] Starting xrdp-sesman"
-xrdp-sesman &
+xrdp-sesman --nodaemon &
 
 echo "[entrypoint] Starting xrdp (foreground)"
 exec xrdp --nodaemon
