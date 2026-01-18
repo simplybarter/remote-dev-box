@@ -12,6 +12,35 @@ echo "=========================================="
 echo "    Remote Dev Box Tooling Audit"
 echo "=========================================="
 
+# -----------------------------------------------------------------------------
+# Host Detection & Self-Propagation
+# -----------------------------------------------------------------------------
+# If we are NOT in a container (missing /.dockerenv), assume we're on the host.
+if [ ! -f "/.dockerenv" ]; then
+    echo "Running on Host. Detecting active dev containers..."
+    
+    # Find containers starting with "dev-"
+    containers=$(docker ps --format "{{.Names}}" | grep "^dev-")
+    
+    if [ -z "$containers" ]; then
+        echo "No active dev containers found."
+        exit 0
+    fi
+    
+    for container in $containers; do
+        echo ""
+        echo ">>> Auditing Container: $container"
+        # Pipe this script into the container to run it
+        cat "$0" | docker exec -i "$container" bash
+    done
+    
+    exit 0
+fi
+
+# -----------------------------------------------------------------------------
+# In-Container Audit Logic
+# -----------------------------------------------------------------------------
+
 check_tool() {
     local name=$1
     local cmd=$2
