@@ -52,7 +52,7 @@ ENV LANG=en_US.UTF-8 \
   LANGUAGE=en_US:en \
   LC_ALL=en_US.UTF-8
 
-# Install Node.js, AI tools, and Antigravity in consolidated layers to save space
+# Install Node.js, Gemini, Codex, OpenCode, Copilot in consolidated layers to save space
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && apt-get install -y --no-install-recommends nodejs \
   && npm install -g npm@latest pnpm@latest \
@@ -61,7 +61,14 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && npm cache clean --force \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Antigravity and Cursor via official repositories
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# Add ~/.local/bin to PATH for all users
+RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/bash.bashrc \
+  && echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/zsh/zshenv
+
+# Install Antigravity, Google Chrome, Cursor via official repositories
 RUN mkdir -p /etc/apt/keyrings \
   && curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg \
   && echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \

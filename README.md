@@ -82,6 +82,7 @@ A Dockerized AI first Agentic Remote Development Environment running Ubuntu 24.0
 *   **Codex CLI**: OpenAI's coding agent (`@openai/codex@latest`).
 *   **OpenCode AI**: Advanced coding assistant (`opencode-ai@latest`).
 *   **GitHub Copilot CLI**: CLI for GitHub Copilot (`gh copilot` / `github-copilot-cli`).
+*   **Claude Code**: Anthropic's AI coding agent (`claude`).
 *   **Cursor**: AI Code Editor (`cursor`).
 *   **Terminal Editors**: `vim`, `nano`.
 
