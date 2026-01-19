@@ -13,7 +13,7 @@ services:
       - TESTDEV_PASSWORD=${TESTDEV_PASSWORD:-testdev}
     volumes:
       - testdev_home:/home/testdev
-    shm_size: "1gb"
+    shm_size: "2gb"
 
 volumes:
   testdev_home:

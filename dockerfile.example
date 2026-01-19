@@ -61,12 +61,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && npm cache clean --force \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Claude Code
-RUN curl -fsSL https://claude.ai/install.sh | bash
-
-# Add ~/.local/bin to PATH for all users
-RUN echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/bash.bashrc \
-  && echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/zsh/zshenv
+# Install Claude Code globally
+RUN curl -fsSL https://claude.ai/install.sh | bash \
+  && mv /root/.local/share/claude /usr/share/claude \
+  && ln -s /usr/share/claude/versions/$(ls /usr/share/claude/versions | head -n 1) /usr/local/bin/claude
 
 # Install Antigravity, Google Chrome, Cursor via official repositories
 RUN mkdir -p /etc/apt/keyrings \
